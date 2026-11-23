@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>蒙德：自由之風的誕生——從古蒙德起義到風魔龍的救贖</title>
+  <style>
+    :root {
+      --bg-dark: #0a111a;
+      --bg-card: rgba(16, 27, 43, 0.88);
+      --bg-card-hover: rgba(23, 38, 60, 0.95);
+      --anemo-primary: #52d9c4;
+      --anemo-glow: rgba(82, 217, 196, 0.35);
+      --gold-primary: #e5c158;
+      --gold-dim: #b8973d;
+      --text-main: #f0f4f8;
+      --text-muted: #9fb1c5;
+      --border-card: rgba(82, 217, 196, 0.25);
+      --border-gold: rgba(229, 193, 88, 0.35);
+      --badge-bg: rgba(82, 217, 196, 0.12);
+      --badge-gold: rgba(229, 193, 88, 0.15);
+      --transition-speed: 0.35s;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(circle at 15% 15%, rgba(82, 217, 196, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 85% 85%, rgba(229, 193, 88, 0.06) 0%, transparent 45%);
+    }
+
+    /* Top Progress Bar */
+    #progress-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.08);
+      z-index: 100;
+    }
+    #progress-bar {
+      height: 100%;
+      width: 8.33%;
+      background: linear-gradient(90deg, var(--anemo-primary), var(--gold-primary));
+      box-shadow: 0 0 10px var(--anemo-glow);
+      transition: width var(--transition-speed) ease;
+    }
+
+    /* Header Bar */
+    header {
+      height: 52px;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(82, 217, 196, 0.12);
+      background: rgba(10, 17, 26, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+    .header-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      color: var(--anemo-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .header-title span {
+      color: var(--text-muted);
+      font-weight: 400;
+      font-size: 0.85rem;
+    }
+    .header-tools {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .slide-counter {
+      font-size: 0.9rem;
+      color: var(--gold-primary);
+      font-variant-numeric: tabular-nums;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .btn-icon {
+      background: transparent;
+      border: 1px solid var(--border-card);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-icon:hover {
+      background: var(--anemo-glow);
+      border-color: var(--anemo-primary);
+    }
+
+    /* Slide Deck Viewport */
+    #deck {
+      flex: 1;
+      position: relative;
+      width: 100%;
+      height: calc(100vh - 110px);
+    }
+
+    .slide {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(30px);
+      transition: opacity var(--transition-speed) ease, transform var(--transition-speed) ease, visibility var(--transition-speed);
+      padding: 2.5rem 3.5rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0);
+    }
+
+    /* Two-column Presentation Layout */
+    .slide-content {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3rem;
+      height: 100%;
+      max-height: 720px;
+      align-items: center;
+    }
+
+    .slide-content.full-width {
+      grid-template-columns: 1fr;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* Text & Content Elements */
+    .tag-group {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      font-size: 0.75rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+    }
+    .tag-anemo {
+      background: var(--badge-bg);
+      color: var(--anemo-primary);
+      border: 1px solid var(--border-card);
+    }
+    .tag-gold {
+      background: var(--badge-gold);
+      color: var(--gold-primary);
+      border: 1px solid var(--border-gold);
+    }
+    .tag-source {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-muted);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+    }
+
+    h1.slide-title {
+      font-size: 2.3rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 1rem;
+      background: linear-gradient(135deg, #ffffff 40%, var(--anemo-primary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    h2.slide-subtitle {
+      font-size: 1.15rem;
+      color: var(--gold-primary);
+      font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+
+    .text-body {
+      font-size: 1.02rem;
+      line-height: 1.7;
+      color: #cfd9e5;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Cards */
+    .card-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .info-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 1.1rem;
+      backdrop-filter: blur(8px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+    .info-card h3 {
+      font-size: 0.95rem;
+      color: var(--anemo-primary);
+      margin-bottom: 0.4rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .info-card p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      line-height: 1.55;
+    }
+
+    /* Quotes */
+    .quote-box {
+      border-left: 3px solid var(--gold-primary);
+      padding: 0.8rem 1.2rem;
+      background: rgba(229, 193, 88, 0.08);
+      margin: 1rem 0;
+      border-radius: 0 6px 6px 0;
+      font-style: italic;
+      color: #f7eed3;
+      font-size: 0.98rem;
+      line-height: 1.6;
+    }
+
+    /* Disclaimer Alert */
+    .alert-box {
+      display: flex;
+      gap: 0.6rem;
+      background: rgba(229, 193, 88, 0.07);
+      border: 1px solid var(--border-gold);
+      border-radius: 6px;
+      padding: 0.6rem 0.9rem;
+      font-size: 0.82rem;
+      color: #e5c158;
+      margin-top: 1rem;
+      line-height: 1.45;
+    }
+
+    /* Media Pane */
+    .media-pane {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      position: relative;
+    }
+    .image-frame {
+      width: 100%;
+      max-height: 480px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border-card);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), 0 0 20px var(--anemo-glow);
+      position: relative;
+      background: #0d1622;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .image-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.6s ease;
+    }
+    .image-frame:hover img {
+      transform: scale(1.03);
+    }
+    .image-caption {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 0.6rem;
+      text-align: center;
+      letter-spacing: 0.5px;
+    }
+
+    /* SVG Diagrams */
+    .diagram-container {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 10px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .matrix-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .matrix-step {
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(82, 217, 196, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      transition: border-color 0.2s;
+    }
+    .matrix-step.highlight {
+      border-color: var(--gold-primary);
+      background: rgba(229, 193, 88, 0.05);
+    }
+    .matrix-step h4 {
+      font-size: 0.95rem;
+      color: var(--anemo-primary);
+      margin-bottom: 0.4rem;
+    }
+    .matrix-step.highlight h4 {
+      color: var(--gold-primary);
+    }
+    .matrix-step p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Footer & Controls */
+    footer {
+      height: 58px;
+      padding: 0 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(82, 217, 196, 0.12);
+      background: rgba(10, 17, 26, 0.7);
+      backdrop-filter: blur(8px);
+      z-index: 50;
+    }
+    .nav-controls {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .btn-nav {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      color: var(--text-main);
+      padding: 7px 18px;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+    .btn-nav:hover:not(:disabled) {
+      background: var(--anemo-primary);
+      color: #06101a;
+      border-color: var(--anemo-primary);
+      box-shadow: 0 0 12px var(--anemo-glow);
+    }
+    .btn-nav:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+    .provenance-tag {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+    .provenance-tag a {
+      color: var(--anemo-primary);
+      text-decoration: none;
+    }
+
+    /* Keyboard hint */
+    .keyboard-hint {
+      font-size: 0.75rem;
+      color: rgba(159, 177, 197, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+    kbd {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+      padding: 1px 5px;
+      font-size: 0.7rem;
+    }
+
+    /* Modal / Overview Drawer */
+    #overview-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(6, 11, 18, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: none;
+      padding: 3rem;
+      overflow-y: auto;
+    }
+    #overview-modal.open {
+      display: block;
+    }
+    .overview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 1.5rem;
+      max-width: 1200px;
+      margin: 2rem auto;
+    }
+    .overview-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-card);
+      border-radius: 8px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .overview-item:hover {
+      border-color: var(--anemo-primary);
+      transform: translateY(-3px);
+      box-shadow: 0 4px 16px var(--anemo-glow);
+    }
+    .overview-item.active {
+      border-color: var(--gold-primary);
+      background: rgba(229, 193, 88, 0.1);
+    }
+    .overview-item-num {
+      font-size: 0.75rem;
+      color: var(--gold-primary);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    .overview-item-title {
+      font-size: 0.9rem;
+      color: #fff;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Progress Bar -->
+  <div id="progress-container">
+    <div id="progress-bar"></div>
+  </div>
+
+  <!-- Header Bar -->
+  <header>
+    <div class="header-title">
+      ✦ 原神世界觀教學簡報 <span>| 蒙德篇</span>
+    </div>
+    <div class="header-tools">
+      <span class="slide-counter" id="counter">01 / 12</span>
+      <button class="btn-icon" onclick="toggleOverview()" title="開啟目錄大綱">☰ 目錄大綱</button>
+      <button class="btn-icon" onclick="toggleFullscreen()" title="全螢幕切換">⛶ 全螢幕</button>
+    </div>
+  </header>
+
+  <!-- Slide Deck Viewport -->
+  <div id="deck">
+
+    <!-- Slide 1: Cover -->
+    <section class="slide active" data-index="1">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-anemo">教學型專題簡報</span>
+            <span class="tag tag-gold">提瓦特歷史脈絡</span>
+            <span class="tag tag-source">Wiki 核心沉澱</span>
+          </div>
+          <h1 class="slide-title">蒙德：自由之風的誕生</h1>
+          <h2 class="slide-subtitle">從古蒙德起義到風魔龍的救贖</h2>
+          <p class="text-body">
+            在提瓦特大陸東北方的群山與平原間，坐落著一座被蒲公英與清風吹拂的城邦——<strong>蒙德</strong>。在世人眼中，這裡是「風與自由的國度」，然而「自由」並非天生的恩賜，而是一部寫滿了三千年犧牲、歌聲與抗爭的壯烈史詩。
+          </p>
+          <div class="info-card">
+            <h3>✦ 本堂課學習指引</h3>
+            <p>本簡報專為初入提瓦特或對其歷史感興趣的大眾設計。我們將依循歷史年表，從三千年前的風暴牢籠，逐步揭開自由之城的靈魂由來。</p>
+          </div>
+          <div class="alert-box">
+            <span>ℹ️</span>
+            <span><strong>說明標註</strong>：本課程梳理之「萌芽 $\rightarrow$ 蛻變 $\rightarrow$ 昇華」三階段為便於理解的<strong>教學分析架構</strong>，非遊戲官方名詞。所有事件皆完全對應官方原始記載。</span>
+          </div>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/monstadt.jpeg" alt="蒙德城全景" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">俯瞰被果酒湖環抱的自由之都·蒙德城</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2: Mondstadt & Venti -->
+    <section class="slide" data-index="2">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-anemo">神明與城邦</span>
+            <span class="tag tag-source">Wiki: [[巴巴托斯]]、[[蒙德]]</span>
+          </div>
+          <h1 class="slide-title">風之神與不統治的城邦</h1>
+          <h2 class="slide-subtitle">提瓦特最奇特的神明：吟遊詩人「溫迪」</h2>
+          <p class="text-body">
+            提瓦特大陸由七位掌握不同元素的「塵世執政」（神明）所庇護。然而，蒙德的守護神<strong>風神巴巴托斯</strong>卻與眾不同：
+          </p>
+          <div class="card-grid">
+            <div class="info-card">
+              <h3>✦ 不坐王座的神明</h3>
+              <p>他不設宮殿、不向臣民發號施令，而是將城邦全權交由凡人自主管理。</p>
+            </div>
+            <div class="info-card">
+              <h3>✦ 浪蕩詩人的化身</h3>
+              <p>他常以綠衣吟遊詩人「溫迪」的模樣漫步於街頭，手持琴弦，為蘋果與美酒歌唱。</p>
+            </div>
+          </div>
+          <div class="quote-box">
+            「若你困於無風之地，我將為你奏響高天之歌。」——這份對自由的極致寬容與放手，究竟從何而來？
+          </div>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/venti.jpeg" alt="吟遊詩人溫迪" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">風之神巴巴托斯的塵世化身——吟遊詩人「溫迪」</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 3: Decarabian & Ancient Mondstadt -->
+    <section class="slide" data-index="3">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-gold">遠古魔神時代（約3000年前）</span>
+            <span class="tag tag-source">Wiki: [[迭卡拉庇安]]、[[安德留斯]]</span>
+          </div>
+          <h1 class="slide-title">風暴的牢籠：高塔孤王</h1>
+          <h2 class="slide-subtitle">自傲的庇護，窒息的統治</h2>
+          <p class="text-body">
+            約三千年前，提瓦特處於魔神混戰的殘酷時代。彼時的蒙德並非綠意盎然，而是一片暴風雪肆虐的蠻荒冰原。
+          </p>
+          <p class="text-body">
+            烈風之魔神<strong>「高塔孤王」迭卡拉庇安</strong>與冰原上的北風狼王安德留斯連年爭戰。為了抵禦外面的嚴寒，孤王以狂暴的烈風築起環形王都（即現在的「風龍廢墟」）。
+          </p>
+          <div class="info-card">
+            <h3>✦ 傲慢的盲區：無法直立的臣民</h3>
+            <p>武器素材官方文本記述：孤王高坐塔頂，自滿於繁華之夢，以為眾人躬身是出於愛戴；但他不知道，眾人是<strong>被呼嘯的烈風壓制得根本無法直立起身</strong>！</p>
+          </div>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/decarabian.jpeg" alt="高塔孤王迭卡拉庇安" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">自居為全城之主與愛人者的「高塔孤王」迭卡拉庇安</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Flight & Birth of Faith -->
+    <section class="slide" data-index="4">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-anemo">部族出逃與信仰之始</span>
+            <span class="tag tag-source">Wiki: [[古恩希爾德家族]]</span>
+          </div>
+          <h1 class="slide-title">冰原絕境與最初的信仰</h1>
+          <h2 class="slide-subtitle">古恩希爾德部族與微細風精靈的相遇</h2>
+          <p class="text-body">
+            面對孤王暴政，臣民苦不堪言。部屬古恩希爾德之父忍無可忍，率領全族冒死逃離高塔，卻在城外的冰天雪地中陷入滅族絕境。
+          </p>
+          <div class="card-grid">
+            <div class="info-card">
+              <h3>✦ 少女虔誠的祈禱</h3>
+              <p>族長年幼的女兒古恩希爾德帶領族人向風禱告，流民被風雪掩蓋的呼聲凝聚成為真摯的信仰。</p>
+            </div>
+            <div class="info-card">
+              <h3>✦ 千風精靈的微小庇護</h3>
+              <p>信仰匯入千風中一縷極其微小的無形精靈（巴巴托斯前身），精靈因而獲得力量，為部族開闢了小小的風之避難所。</p>
+            </div>
+          </div>
+          <p class="text-body" style="margin-top: 1rem;">
+            父親死後，古恩希爾德成為部族首領與首位女祭司。她與風精靈立下誓約，古恩希爾德家族自此確立了「永護蒙德」的崇高祖訓。
+          </p>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/old-monstadt.jpeg" alt="古蒙德風暴廢墟" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">被萬丈風暴環壁死死封鎖的古蒙德王都遺址</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: The Nameless Bard -->
+    <section class="slide" data-index="5">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-anemo">自由理念的萌芽</span>
+            <span class="tag tag-source">Wiki: [[無名少年]]、[[微風與少年]]</span>
+          </div>
+          <h1 class="slide-title">無名少年與「看見飛鳥」的願望</h1>
+          <h2 class="slide-subtitle">蒙德自由精神的第一顆種子</h2>
+          <p class="text-body">
+            在高塔暴風城內，無形的微風精靈結識了一位彈奏里拉琴的少年。
+          </p>
+          <p class="text-body">
+            少年一輩子生活在風牆之內，生來不曾見過藍天、鷹隼與綠草。他一邊撥動豎琴，一邊在狂風呼嘯中吐露心聲：
+          </p>
+          <div class="quote-box">
+            「我想看見飛鳥翱翔的模樣。<br>
+            朋友，不與我同去嗎？」
+          </div>
+          <p class="text-body">
+            精靈為了少年蒐集了鷹隼的翎羽，少年則以琴聲吹響了反抗暴風的號角。<strong>這份對外界天空最純粹、最本能的渴望，奠定了整個蒙德自由理念的最初萌芽。</strong>
+          </p>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/nameless-bard.jpeg" alt="無名少年琴師" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">渴望看見高天飛鳥翱翔的古蒙德無名少年琴師</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: The Uprising & Sacrifice -->
+    <section class="slide" data-index="6">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-gold">古蒙德起義決戰（約2600年前）</span>
+            <span class="tag tag-source">Wiki: [[古蒙德起義事件]]、[[巴巴托斯]]</span>
+          </div>
+          <h1 class="slide-title">自由高歌的瞬間與少年的模樣</h1>
+          <h2 class="slide-subtitle">自由的沉痛代價與風神化身</h2>
+          <p class="text-body">
+            少年撥動琴弦，古恩希爾德部族與反抗軍直面神明的震怒向高塔衝鋒。
+          </p>
+          <div class="info-card" style="margin-bottom: 1rem;">
+            <h3>✦ 城破瞬間：自由高歌</h3>
+            <p>素材記載，連狼王宣戰都未傷分毫的都城，在<strong>「自由」高歌的瞬間土崩瓦解</strong>，孤王繁華之夢粉碎隕落！</p>
+          </div>
+          <p class="text-body">
+            然而，少年卻不幸倒在了戰火的箭雨之中。神位空出後，微風精靈登上神座戴上神冠，成為風神巴巴托斯。
+          </p>
+          <div class="quote-box">
+            <strong>化為少年的形貌</strong>：風神以神力重塑身軀，選擇化作戰死少年的模樣，彈響他的琴弦，代他看遍這座破繭重生的自由城邦。
+          </div>
+        </div>
+        <div class="media-pane">
+          <!-- SVG Diagram: Lineage of Venti -->
+          <div class="diagram-container">
+            <h4 style="color: var(--gold-primary); font-size: 0.9rem; text-align: center;">✦ 古蒙德起義與神明形貌傳承關係 ✦</h4>
+            <svg viewBox="0 0 320 220" style="width: 100%; height: auto;">
+              <!-- Wind Spirit -->
+              <circle cx="60" cy="50" r="30" fill="rgba(82,217,196,0.15)" stroke="#52d9c4" stroke-width="2"/>
+              <text x="60" y="47" fill="#52d9c4" font-size="10" text-anchor="middle" font-weight="bold">微細風精靈</text>
+              <text x="60" y="61" fill="#9fb1c5" font-size="8" text-anchor="middle">千風中一縷</text>
+
+              <!-- Plus -->
+              <text x="110" y="55" fill="#e5c158" font-size="16" text-anchor="middle">+</text>
+
+              <!-- Nameless Bard -->
+              <circle cx="160" cy="50" r="30" fill="rgba(229,193,88,0.15)" stroke="#e5c158" stroke-width="2"/>
+              <text x="160" y="47" fill="#e5c158" font-size="10" text-anchor="middle" font-weight="bold">無名少年</text>
+              <text x="160" y="61" fill="#9fb1c5" font-size="8" text-anchor="middle">里拉琴之歌</text>
+
+              <!-- Down Arrow -->
+              <line x1="110" y1="90" x2="110" y2="130" stroke="#9fb1c5" stroke-width="1.5" stroke-dasharray="3,3"/>
+              <polygon points="106,128 114,128 110,136" fill="#9fb1c5"/>
+              <text x="140" y="115" fill="#cfd9e5" font-size="8.5">推翻高塔 / 少年犧牲</text>
+
+              <!-- Barbatos (Venti) -->
+              <rect x="30" y="145" width="260" height="55" rx="8" fill="rgba(16,27,43,0.95)" stroke="#52d9c4" stroke-width="1.5"/>
+              <text x="160" y="167" fill="#52d9c4" font-size="12" text-anchor="middle" font-weight="bold">風神巴巴托斯（化身溫迪）</text>
+              <text x="160" y="186" fill="#cfd9e5" font-size="9" text-anchor="middle">「承載少年未竟之夢，歌唱自由詩篇」</text>
+            </svg>
+            <p style="font-size: 0.75rem; color: var(--text-muted); text-align: center;">神明的樣貌是一份跨越千年的悼念與誓言</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: Aristocracy & Vennessa -->
+    <section class="slide" data-index="7">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-gold">舊蒙德貴族時期（約1000年前）</span>
+            <span class="tag tag-source">Wiki: [[溫妮莎]]、[[勞倫斯家族]]</span>
+          </div>
+          <h1 class="slide-title">自由的蛻變：角鬥士溫妮莎</h1>
+          <h2 class="slide-subtitle">當自由再次淪為牢籠，抗爭再度吹起</h2>
+          <p class="text-body">
+            高塔推翻千年後，開國貴族中的<strong>勞倫斯家族</strong>腐化墮落，將蒙德城變為驅使奴隸的牢檻。慶典淪為虛偽遊戲，平民與外來流民備受凌虐。
+          </p>
+          <div class="info-card">
+            <h3>✦ 身負鐐銬的紅髮少女</h3>
+            <p>來自南方的異鄉角鬥士少女<strong>溫妮莎</strong>與族人被捕入獄。肉身雖被拘禁，她卻從未放棄為族人、城邦與自由祈禱。</p>
+          </div>
+          <p class="text-body" style="margin-top: 1rem;">
+            沉睡甦醒的風神巴巴托斯被熱忱祈禱喚來監牢，以友誼為約與少女結盟，相伴在荒原角鬥場迎戰肆虐的魔龍。
+          </p>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/vennessa.jpeg" alt="角鬥士溫妮莎" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">掙脫貴族奴隸枷鎖的傳奇角鬥士·溫妮莎</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 8: Knights of Favonius & Freedom Ideology -->
+    <section class="slide" data-index="8">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-anemo">制度奠基與哲學昇華</span>
+            <span class="tag tag-source">Wiki: [[西風騎士團]]、[[舊蒙德貴族起義事件]]</span>
+          </div>
+          <h1 class="slide-title">在妳的歌裡，妳才是主角</h1>
+          <h2 class="slide-subtitle">「自由不是恩賜，抗爭才是！」</h2>
+          <p class="text-body">
+            在風神歌聲激勵下，溫妮莎斬殺魔龍，微風吹垮了暴君高塔，勞倫斯統治被徹底推翻。
+          </p>
+          <div class="quote-box">
+            面對溫妮莎的感激，風神巴巴托斯婉拒其道謝：<br>
+            <strong>「在妳的歌裡，妳才是主角……我收下了妳的友誼，自然當為妳的自由歌唱。」</strong>
+          </div>
+          <div class="card-grid">
+            <div class="info-card">
+              <h3>✦ 西風騎士團創立</h3>
+              <p>溫妮莎重建蒙德城，建立西風騎士團守護自由，成為「第一位騎士」。</p>
+            </div>
+            <div class="info-card">
+              <h3>✦ 自由哲學的定型</h3>
+              <p>蒙德人確立真理：神明不直接包辦一切，真正的自由必須由人民自己親手爭取與守護。</p>
+            </div>
+          </div>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/favonius.jpeg" alt="西風騎士團總部" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">象徵守望城邦與民眾自由的西風騎士團</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 9: Cataclysm & Durin -->
+    <section class="slide" data-index="9">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-gold">坎瑞亞災變時期（約500年前）</span>
+            <span class="tag tag-source">Wiki: [[杜林]]、[[坎瑞亞災變與杜林之戰]]</span>
+          </div>
+          <h1 class="slide-title">深淵黑潮與雪山屠龍之役</h1>
+          <h2 class="slide-subtitle">自由的代價：毒龍杜林與特瓦林的悲歌</h2>
+          <p class="text-body">
+            約五百年前，坎瑞亞災變爆發，漆黑魔獸潮席捲大陸。深邃古國的魔龍<strong>「杜林」</strong>大舉入侵蒙德，土地荒蕪，生靈塗炭。
+          </p>
+          <div class="info-card">
+            <h3>✦ 空前危機與神明回應</h3>
+            <p>此時西風騎士團人才凋零、獅牙騎士空缺。民眾的悲慟驚醒了風神，巴巴托斯召喚其最古老的眷屬——東風之龍<strong>特瓦林</strong>御風出征。</p>
+          </div>
+          <p class="text-body" style="margin-top: 1rem;">
+            在劈散叢雲的激戰中，特瓦林展開六翼撕裂杜林鋼鱗，最終在龍脊雪山咬碎惡龍咽喉將其擊墜。然而，特瓦林卻不慎<strong>飲下了腐蝕入骨的漆黑毒血</strong>。
+          </p>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/dragonspine.jpeg" alt="龍脊雪山之戰場" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">毒龍杜林隕落長眠的極寒龍脊雪山戰場</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 10: Dvalin & Stormterror Crisis -->
+    <section class="slide" data-index="10">
+      <div class="slide-content">
+        <div class="text-pane">
+          <div class="tag-group">
+            <span class="tag tag-anemo">現代風魔龍危機</span>
+            <span class="tag tag-source">Wiki: [[特瓦林]]、[[天空之傲]]</span>
+          </div>
+          <h1 class="slide-title">英雄的孤獨與救贖</h1>
+          <h2 class="slide-subtitle">特瓦林長眠甦醒與自由的寬容</h2>
+          <p class="text-body">
+            英雄因吞下毒血忍受著噬骨劇痛陷入數百年沉睡，蒙德後代卻在和平中忘卻了風龍的守護功績。
+          </p>
+          <div class="card-grid">
+            <div class="info-card">
+              <h3>✦ 誤解與痛苦化為「風魔龍」</h3>
+              <p>深淵邪物趁虛而入，痛苦與被遺忘的悲憤讓特瓦林迷失，被蒙德民眾誤認為襲擊城邦的惡龍。</p>
+            </div>
+            <div class="info-card">
+              <h3>✦ 琴聲救贖，重獲名號</h3>
+              <p>風神溫迪並未消滅巨龍，而是引導旅行者以勇氣清除毒血，用琴聲撫慰老友，讓特瓦林重獲「自由之名」。</p>
+            </div>
+          </div>
+          <p class="text-body" style="margin-top: 1rem;">
+            這場危機展現了現代蒙德對受難者的寬恕與包容：<strong>自由並非無情的防衛，而是願意傾聽受傷者的心聲並予以救贖。</strong>
+          </p>
+        </div>
+        <div class="media-pane">
+          <div class="image-frame">
+            <img src="../../assets/dvalin.jpeg" alt="東風之龍特瓦林" onerror="this.style.display='none'">
+          </div>
+          <p class="image-caption">被毒血折磨後重獲自由與清醒的東風之龍·特瓦林</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 11: Evolution Summary -->
+    <section class="slide" data-index="11">
+      <div class="slide-content full-width">
+        <div class="tag-group">
+          <span class="tag tag-anemo">歷史演化全景</span>
+          <span class="tag tag-gold">教學分析模型</span>
+          <span class="tag tag-source">Wiki 全局沉澱</span>
+        </div>
+        <h1 class="slide-title">蒙德自由理念的三重歷史躍遷</h1>
+        <h2 class="slide-subtitle">三千年抗爭史詩如何塑造了一座城邦的靈魂</h2>
+        
+        <div class="matrix-grid">
+          <div class="matrix-step">
+            <h4>1. 萌芽期（約2600年前）</h4>
+            <p style="color: var(--anemo-primary); font-weight: 600; margin-bottom: 0.3rem;">破繭的渴望</p>
+            <p><strong>核心符號</strong>：高塔孤王 / 無名少年 / 風精靈</p>
+            <p><strong>理念內涵</strong>：打破暴風壁壘，對看見藍天與飛鳥的純真嚮往。神明確立「不親政」，把自由留給凡人。</p>
+          </div>
+          <div class="matrix-step highlight">
+            <h4>2. 蛻變期（約1000年前）</h4>
+            <p style="color: var(--gold-primary); font-weight: 600; margin-bottom: 0.3rem;">抗爭與自立</p>
+            <p><strong>核心符號</strong>：勞倫斯家族 / 溫妮莎 / 騎士團</p>
+            <p><strong>理念內涵</strong>：拒絕依賴神明的恩賜，強調人民自我覺醒。確立「在妳的歌裡妳才是主角」，並建立制度守護。</p>
+          </div>
+          <div class="matrix-step">
+            <h4>3. 昇華期（500年前至現代）</h4>
+            <p style="color: var(--anemo-primary); font-weight: 600; margin-bottom: 0.3rem;">守護與寬容救贖</p>
+            <p><strong>核心符號</strong>：杜林之戰 / 特瓦林 / 旅行者</p>
+            <p><strong>理念內涵</strong>：承擔守護的沉重代價。面對被毒害的同伴不盲目誅殺，而是以琴聲安撫與淨化，實現真正的自由包容。</p>
+          </div>
+        </div>
+
+        <div class="alert-box" style="margin-top: 1.5rem;">
+          <span>ℹ️</span>
+          <span><strong>備註提醒</strong>：「萌芽、蛻變、昇華」為本次教學之結構化歸納分析，並非原神遊戲內的官方名詞。本對比展示了蒙德自由精神由「個人本能」到「城邦制度」再到「靈魂哲學」的層層遞進。</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 12: Conclusion -->
+    <section class="slide" data-index="12">
+      <div class="slide-content full-width" style="text-align: center;">
+        <div class="tag-group" style="justify-content: center;">
+          <span class="tag tag-gold">課程結語</span>
+          <span class="tag tag-anemo">風的詩篇</span>
+        </div>
+        <h1 class="slide-title" style="font-size: 2.8rem; margin-bottom: 1.5rem;">飛吧，飛吧，就像飛鳥那樣</h1>
+        <p class="text-body" style="font-size: 1.15rem; max-width: 820px; margin: 0 auto 2rem; line-height: 1.8;">
+          蒙德之所以被稱為「自由之都」，並不是因為這裡從不曾降臨黑暗或暴政，<br>
+          而是每當狂風化為牢籠、每當枷鎖鎖住大地，<br>
+          總有人願意如少年的琴弦、如溫妮莎的利劍、如特瓦林的雙翼一般，<br>
+          挺身吹起反抗之風。
+        </p>
+        <div class="quote-box" style="max-width: 650px; margin: 0 auto; text-align: center; border-left: none; border-top: 2px solid var(--gold-primary); border-bottom: 2px solid var(--gold-primary); padding: 1.2rem;">
+          「這便是蒙德自由的泉源。<br>當時日昏暗無光，切莫忘記英雄的故事，莫放棄自由的希望。」
+        </div>
+        <p style="margin-top: 2.5rem; color: var(--text-muted); font-size: 0.85rem;">
+          本簡報全內容 100% 基於《原神》LLM Wiki 知識庫沉澱 | 感謝聆聽
+        </p>
+      </div>
+    </section>
+
+  </div>
+
+  <!-- Footer Navigation Bar -->
+  <footer>
+    <div class="provenance-tag" id="provenance-display">
+      Wiki 溯源：<a href="#">[[蒙德]]</a> | 官方一手文本
+    </div>
+    <div class="nav-controls">
+      <button class="btn-nav" id="btn-prev" onclick="prevSlide()" disabled>← 上一頁</button>
+      <button class="btn-nav" id="btn-next" onclick="nextSlide()">下一頁 →</button>
+    </div>
+    <div class="keyboard-hint">
+      提示：可用鍵盤 <kbd>←</kbd> <kbd>→</kbd> 或 <kbd>Space</kbd> 換頁
+    </div>
+  </footer>
+
+  <!-- Overview Modal -->
+  <div id="overview-modal" onclick="if(event.target === this) toggleOverview()">
+    <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto;">
+      <h2 style="color: var(--anemo-primary); font-size: 1.4rem;">✦ 簡報全景大綱 (Slide Overview)</h2>
+      <button class="btn-icon" onclick="toggleOverview()" style="font-size: 1rem; padding: 4px 12px;">✕ 關閉</button>
+    </div>
+    <div class="overview-grid" id="overview-grid">
+      <!-- Generated by JS -->
+    </div>
+  </div>
+
+  <script>
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+    let currentSlide = 1;
+
+    const provenanceMap = {
+      1: "Wiki 溯源：[[蒙德]] | 來源：01-biography-of-gunnhildr.md",
+      2: "Wiki 溯源：[[巴巴托斯]]、[[蒙德]] | 來源：05-the-boy-and-the-whirlwind.md",
+      3: "Wiki 溯源：[[迭卡拉庇安]]、[[安德留斯]] | 來源：02-decarabians-materials.md",
+      4: "Wiki 溯源：[[古恩希爾德家族]]、[[蒙德]] | 來源：01-biography-of-gunnhildr.md",
+      5: "Wiki 溯源：[[無名少年]]、[[巴巴托斯]] | 來源：05-the-boy-and-the-whirlwind.md",
+      6: "Wiki 溯源：[[古蒙德起義事件]]、[[無名少年]] | 來源：05-the-boy-and-the-whirlwind.md",
+      7: "Wiki 溯源：[[溫妮莎]]、[[勞倫斯家族]] | 來源：03-legend-of-vennessa.md",
+      8: "Wiki 溯源：[[西風騎士團]]、[[舊蒙德貴族起義事件]] | 來源：03-legend-of-vennessa.md",
+      9: "Wiki 溯源：[[杜林]]、[[坎瑞亞災變與杜林之戰]] | 來源：04-skyward-pride.md",
+      10: "Wiki 溯源：[[特瓦林]]、[[四風守護]] | 來源：04-breeze-amidst-the-trees-dragon.md",
+      11: "Wiki 溯源：全局知識庫沉澱 | 教學結構分析模型",
+      12: "Wiki 溯源：[[蒙德]]、[[巴巴托斯]] | 課程總結"
+    };
+
+    const titles = [
+      "封面：蒙德自由之風的誕生",
+      "風之神與不統治的城邦",
+      "高塔孤王迭卡拉庇安",
+      "冰原絕境與最初的信仰",
+      "無名少年與看見飛鳥的願望",
+      "自由高歌的瞬間與神明肉身",
+      "角鬥士溫妮莎與舊貴族枷鎖",
+      "在妳的歌裡，妳才是主角",
+      "深淵黑潮與雪山屠龍之役",
+      "特瓦林長眠甦醒與風魔龍危機",
+      "自由理念的三重歷史躍遷",
+      "結語：飛吧，就像飛鳥那樣"
+    ];
+
+    function updateSlide(newIndex) {
+      if (newIndex < 1 || newIndex > totalSlides) return;
+      
+      slides.forEach((slide, idx) => {
+        slide.classList.remove('active');
+        if (idx + 1 === newIndex) {
+          slide.classList.add('active');
+        }
+      });
+
+      currentSlide = newIndex;
+
+      // Update counter & progress bar
+      document.getElementById('counter').innerText = 
+        `${String(currentSlide).padStart(2, '0')} / ${String(totalSlides).padStart(2, '0')}`;
+      document.getElementById('progress-bar').style.width = 
+        `${(currentSlide / totalSlides) * 100}%`;
+
+      // Update Provenance display
+      document.getElementById('provenance-display').innerText = 
+        provenanceMap[currentSlide] || "Wiki 溯源對照";
+
+      // Update Nav Button states
+      document.getElementById('btn-prev').disabled = currentSlide === 1;
+      document.getElementById('btn-next').disabled = currentSlide === totalSlides;
+
+      // Update Overview Grid active item
+      const overviewItems = document.querySelectorAll('.overview-item');
+      overviewItems.forEach((item, idx) => {
+        item.classList.toggle('active', idx + 1 === currentSlide);
+      });
+    }
+
+    function nextSlide() {
+      if (currentSlide < totalSlides) updateSlide(currentSlide + 1);
+    }
+
+    function prevSlide() {
+      if (currentSlide > 1) updateSlide(currentSlide - 1);
+    }
+
+    // Keyboard Event Handling
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+        e.preventDefault();
+        nextSlide();
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        prevSlide();
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        updateSlide(1);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        updateSlide(totalSlides);
+      } else if (e.key === 'Escape') {
+        const modal = document.getElementById('overview-modal');
+        if (modal.classList.contains('open')) toggleOverview();
+      }
+    });
+
+    // Overview Drawer
+    function initOverview() {
+      const grid = document.getElementById('overview-grid');
+      titles.forEach((title, i) => {
+        const div = document.createElement('div');
+        div.className = `overview-item ${i + 1 === currentSlide ? 'active' : ''}`;
+        div.onclick = () => {
+          updateSlide(i + 1);
+          toggleOverview();
+        };
+        div.innerHTML = `
+          <div class="overview-item-num">PAGE ${String(i + 1).padStart(2, '0')}</div>
+          <div class="overview-item-title">${title}</div>
+        `;
+        grid.appendChild(div);
+      });
+    }
+
+    function toggleOverview() {
+      const modal = document.getElementById('overview-modal');
+      modal.classList.toggle('open');
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+      }
+    }
+
+    // Init on load
+    initOverview();
+    updateSlide(1);
+  </script>
+</body>
+</html>
